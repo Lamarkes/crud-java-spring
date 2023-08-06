@@ -30,4 +30,14 @@ public class ProductController {
 
     }
 
+    @PutMapping
+    public ResponseEntity updateProduct(@RequestBody @Valid RequestProduct data){
+        Product product = productRepository.getReferenceById(data.id());
+        product.setName(data.name());
+        product.setPrice_in_cents(data.price_in_cents());
+
+        return ResponseEntity.ok();
+
+    }
+
 }
