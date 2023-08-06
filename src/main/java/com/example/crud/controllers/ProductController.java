@@ -19,12 +19,14 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @GetMapping
+    @Transactional
     public ResponseEntity getAllProducts(){
-        var products = productRepository.findAll();
+        var products = productRepository.findAllByActiveTrue();
         return ResponseEntity.ok(products);
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity registerProduct(@RequestBody @Valid RequestProduct data){
 
         Product product = new Product(data);
@@ -47,10 +49,15 @@ public class ProductController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @Transactional
     public ResponseEntity deleteProduct(@PathVariable Long id){
-
-        productRepository.deleteById(id);
-
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if (optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+            product.setActive(false);
+            return ResponseEntity.noContent().build();
+            //productRepository.deleteById(id);
+        }
         return ResponseEntity.noContent().build();
     }
 
