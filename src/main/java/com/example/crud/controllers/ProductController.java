@@ -8,8 +8,11 @@ import jakarta.validation.Valid;
 import com.example.crud.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,14 +25,14 @@ public class ProductController {
     @GetMapping
     @Transactional
     public ResponseEntity getAllProducts(){
-        var products = productRepository.findAllByActiveTrue();
+        List<Product> products = productRepository.findAllByActiveTrue();
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
     @Transactional
     public ResponseEntity getProductById(@PathVariable Long id){
-        var product = productRepository.findById(id);
+        Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
             return ResponseEntity.ok(product);
         }
