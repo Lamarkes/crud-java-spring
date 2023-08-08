@@ -26,6 +26,18 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/{id}")
+    @Transactional
+    public ResponseEntity getProductById(@PathVariable Long id){
+        var product = productRepository.findById(id);
+        if (product.isPresent()) {
+            return ResponseEntity.ok(product);
+        }
+        else {
+            throw new EntityNotFoundException();
+        }
+    }
+
     @PostMapping
     @Transactional
     public ResponseEntity registerProduct(@RequestBody @Valid RequestProduct data){
@@ -44,6 +56,7 @@ public class ProductController {
             Product product = optionalProduct.get();
             product.setName(data.name());
             product.setPrice_in_cents(data.price_in_cents());
+            product.setActive(data.active());
 
             return ResponseEntity.ok(product);
         }else {
